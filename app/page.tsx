@@ -1,5 +1,21 @@
 'use client';
 
+import {
+  DndContext,
+  closestCenter,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  useSortable,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+
 import React, {useEffect, useRef, useState} from "react";
 import {
   DropdownMenu,
@@ -25,6 +41,51 @@ interface Website {
   icon: string;
 }
 
+function SortableWebsite({
+                           website,
+                           handleWebsiteContextMenu,
+                         }: {
+  website: Website;
+  handleWebsiteContextMenu: (e: React.MouseEvent, website: Website) => void;
+}) {
+  const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: website.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    cursor: 'grab',
+  };
+
+  const [hasMounted, setHasMounted] = useState(false);
+
+  useEffect(() => {
+    setHasMounted(true);
+  }, []);
+
+  if (!hasMounted) {
+    return null; // ⛔ 不渲染任何 HTML，避免 hydration 错误
+  }
+
+  return (
+      <div
+          ref={setNodeRef}
+          style={style}
+          {...attributes}
+          {...listeners}
+          data-website-item=""
+          data-website-id={website.id}
+          onClick={() => window.open(website.url, '_blank')}
+          onContextMenu={(e) => handleWebsiteContextMenu(e, website)}
+          className="cursor-pointer flex flex-col items-center w-18 mt-4 border-amber-50 flex-shrink-0"
+      >
+        <div className="w-18 h-18 bg-white flex rounded-xl items-center justify-center">
+          <img src={website.icon} className="size-16 rounded-lg" alt={website.name} />
+        </div>
+        <p className="mt-1 text-white text-xs leading-tight">{website.name}</p>
+      </div>
+  );
+}
+
 export default function Page() {
   const [contextMenu, setContextMenu] = useState<{ x: number; y: number } | null>(null);
   const [contextUpdateMenu, setContextUpdateMenu] = useState<{ x: number; y: number; website: Website } | null>(null);
@@ -32,6 +93,27 @@ export default function Page() {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [editingWebsite, setEditingWebsite] = useState<Website | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+
+  const sensors = useSensors(
+      useSensor(PointerSensor, {
+        activationConstraint: {
+          distance: 5,
+        },
+      })
+  );
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (!over) return; // ✅ 添加这个判断避免报错
+
+    if (active.id !== over.id) {
+      const oldIndex = websites.findIndex((w) => w.id === active.id);
+      const newIndex = websites.findIndex((w) => w.id === over.id);
+      const newWebsites = arrayMove(websites, oldIndex, newIndex);
+      setWebsites(newWebsites);
+    }
+  };
 
   // 表单数据
   const [formData, setFormData] = useState({
@@ -394,23 +476,25 @@ export default function Page() {
             onChange={handleFileChange}
             style={{ display: 'none' }}
         />
-        <div className="md:mt-51 md:mx-52 sm:mt-16 sm:mx-20 mt-6 mx-5 flex flex-wrap gap-5">
-          {websites.map((website) => (
-              <div
-                  key={website.id}
-                  data-website-item=""
-                  data-website-id={website.id}
-                  onClick={() => window.open(website.url, '_blank')}
-                  onContextMenu={(e) => handleWebsiteContextMenu(e, website)}
-                  className="cursor-pointer flex flex-col items-center w-18 mt-4 border-amber-50 flex-shrink-0"
-              >
-                <div className="w-18 h-18 bg-white flex rounded-xl items-center justify-center">
-                  <img src={website.icon} className="size-16 rounded-lg" alt={website.name} />
-                </div>
-                <p className="mt-1 text-white text-xs leading-tight">{website.name}</p>
-              </div>
-          ))}
-        </div>
+
+        hasMounted && (
+
+        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+          <SortableContext items={websites} strategy={verticalListSortingStrategy}>
+            <div className="md:mt-51 md:mx-52 sm:mt-16 sm:mx-20 mt-6 mx-5 flex flex-wrap gap-5">
+              {websites.map((website) => (
+                  <SortableWebsite
+                      key={website.id}
+                      website={website}
+                      handleWebsiteContextMenu={handleWebsiteContextMenu}
+                  />
+              ))}
+            </div>
+          </SortableContext>
+        </DndContext>
+
+
+        )
 
         {/* 空白区域右键菜单 */}
         {contextMenu && (
