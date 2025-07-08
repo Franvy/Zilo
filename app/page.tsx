@@ -146,6 +146,7 @@ export default function Page() {
       try {
         urlObj = new URL(finalUrl);
       } catch (err) {
+        console.error('非法URL:', err);
         throw new Error('非法 URL: ' + finalUrl);
       }
 
