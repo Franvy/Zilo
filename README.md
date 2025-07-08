@@ -1,36 +1,40 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# <img src="/public/apple-touch-icon.png" width="20"> Zilo
 
-## Getting Started
+> ✨ A modern bookmark manager with customizable global background color — optimized for Safari and minimalism.  
+> ✨ 一款支持全局背景颜色自定义的现代化书签管理器，专为 Safari 和极简设计而打造。
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+<img src="/public/preview.png" >
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 📌 Features | 功能特色
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- ⚡️ **Quick Access to Websites** — Click icons to launch saved sites instantly.  
+  快速访问网站：点击图标即可立即打开保存的网站。
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- 🎨 **Custom Global Background Color** — Unlike most bookmark tools that only allow background images, Zilo lets you set a **solid color** background that blends naturally with Safari.  
+  自定义全局背景颜色：Zilo 不仅能设置背景图，更支持纯色背景，与 Safari 原生界面完美融合。
 
-## Learn More
+- 🧩 **Minimal & Clean UI** — Built with Next.js 15 + Tailwind CSS 4 + ShadCN UI.  
+  极简设计：基于 Next.js 15、Tailwind CSS 4 和 ShadCN UI 构建，界面简洁、响应迅速。
 
-To learn more about Next.js, take a look at the following resources:
+- 📱 **Responsive Layout** — Mobile-friendly, dark mode ready.  
+  响应式布局：移动端兼容，支持深色模式。
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
-## Deploy on Vercel
+📄 License | 许可证
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+This project is licensed under the MIT License.
+本项目使用 MIT 开源许可证。
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+⸻
+
+🧑‍💻 Author | Franvy
+
+Zilo by Franvy
+
+欢迎提 Issue 或 PR 改进本项目 🚀
+Feel free to submit issues or PRs to improve this project.
+
