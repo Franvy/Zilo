@@ -301,6 +301,19 @@ export default function Page() {
 
   // 点击任意处关闭菜单
   useEffect(() => {
+    // 页面加载的时候尝试从本地获取数据
+    const saved = localStorage.getItem('my-websites');
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) {
+          setWebsites(parsed);
+        }
+      } catch (err) {
+        console.error('读取本地网站数据失败:', err);
+      }
+    }
+
     const handleClick = () => {
       setContextMenu(null);
       setContextUpdateMenu(null);
@@ -308,6 +321,10 @@ export default function Page() {
     document.addEventListener('click', handleClick);
     return () => document.removeEventListener('click', handleClick);
   }, []);
+  // 监听 websites 变化时，保存到 localStorage
+  useEffect(() => {
+    localStorage.setItem('my-websites', JSON.stringify(websites));
+  }, [websites]);
 
   const handleExport = () => {
     const dataStr = JSON.stringify(websites, null, 2);
