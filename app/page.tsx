@@ -49,6 +49,7 @@ function SortableWebsite({
   handleWebsiteContextMenu: (e: React.MouseEvent, website: Website) => void;
 }) {
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: website.id });
+  const [isHovered, setIsHovered] = useState(false);
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -63,7 +64,7 @@ function SortableWebsite({
   }, []);
 
   if (!hasMounted) {
-    return null; // ⛔ 不渲染任何 HTML，避免 hydration 错误
+    return null;
   }
 
   return (
@@ -76,12 +77,28 @@ function SortableWebsite({
           data-website-id={website.id}
           onClick={() => window.open(website.url, '_blank')}
           onContextMenu={(e) => handleWebsiteContextMenu(e, website)}
-          className="cursor-pointer flex flex-col items-center w-18 mt-4 border-amber-50 flex-shrink-0"
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+          className={`cursor-pointer flex flex-col items-center w-18 mt-4 border-amber-50 flex-shrink-0 transition-all duration-300 ease-in-out ${
+              isHovered ? 'transform scale-110' : 'transform scale-100'
+          }`}
       >
-        <div className="w-18 h-18 bg-white flex rounded-xl items-center justify-center">
-          <img src={website.icon} className="size-16 rounded-lg" alt={website.name} />
+        <div className={`w-18 h-18 bg-white flex rounded-xl items-center justify-center transition-all duration-300 ease-in-out ${
+            isHovered ? 'shadow-lg shadow-white/20' : ''
+        }`}>
+          <img
+              src={website.icon}
+              className={`size-16 rounded-lg transition-all duration-300 ease-in-out ${
+                  isHovered ? 'brightness-110' : ''
+              }`}
+              alt={website.name}
+          />
         </div>
-        <p className="mt-1 text-white text-xs leading-tight">{website.name}</p>
+        <p className={`mt-1 text-white text-xs leading-tight transition-all duration-300 ease-in-out ${
+            isHovered ? 'text-blue-300' : ''
+        }`}>
+          {website.name}
+        </p>
       </div>
   );
 }
@@ -93,6 +110,10 @@ export default function Page() {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [editingWebsite, setEditingWebsite] = useState<Website | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [pageTransition, setPageTransition] = useState(false);
+
+  const ITEMS_PER_PAGE = 36;
 
   const sensors = useSensors(
       useSensor(PointerSensor, {
@@ -105,7 +126,7 @@ export default function Page() {
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
 
-    if (!over) return; // ✅ 添加这个判断避免报错
+    if (!over) return;
 
     if (active.id !== over.id) {
       const oldIndex = websites.findIndex((w) => w.id === active.id);
@@ -125,58 +146,10 @@ export default function Page() {
   // 初始网站数据
   const [websites, setWebsites] = useState<Website[]>([
     {
-      "id": 4,
-      "name": "Google",
-      "url": "https://google.com",
-      "icon": "https://www.google.com/s2/favicons?domain=google.com&sz=256"
-    },
-    {
-      "id": 5,
-      "name": "Github",
-      "url": "https://github.com",
-      "icon": "https://www.google.com/s2/favicons?domain=github.com&sz=256"
-    },
-    {
-      "id": 6,
-      "name": "Youtube",
-      "url": "https://www.youtube.com",
-      "icon": "https://www.google.com/s2/favicons?domain=www.youtube.com&sz=256"
-    },
-    {
-      "id": 7,
-      "name": "Facebook",
-      "url": "https://facebook.com",
-      "icon": "https://www.google.com/s2/favicons?domain=facebook.com&sz=256"
-    },
-    {
-      "id": 8,
-      "name": "Twitter",
-      "url": "https://twitter.com",
-      "icon": "https://abs.twimg.com/responsive-web/client-web/icon-ios.77d25eba.png"
-    },
-    {
-      "id": 13,
-      "name": "Reddit",
-      "url": "https://reddit.com",
-      "icon": "https://www.google.com/s2/favicons?domain=reddit.com&sz=256"
-    },
-    {
-      "id": 16,
-      "name": "Slack",
-      "url": "https://slack.com",
-      "icon": "https://a.slack-edge.com/fd21de4/marketing/img/nav/logo.svg"
-    },
-    {
-      "id": 17,
-      "name": "Notion",
-      "url": "https://notion.so",
-      "icon": "https://www.google.com/s2/favicons?domain=notion.so&sz=256"
-    },
-    {
-      "id": 18,
-      "name": "Figma",
-      "url": "https://figma.com",
-      "icon": "https://www.google.com/s2/favicons?domain=figma.com&sz=256"
+      "id": 25,
+      "name": "Mi",
+      "url": "https://mi.com",
+      "icon": "https://www.google.com/s2/favicons?domain=mi.com&sz=256"
     },
     {
       "id": 19,
@@ -191,6 +164,18 @@ export default function Page() {
       "icon": "https://www.google.com/s2/favicons?domain=adobe.com&sz=256"
     },
     {
+      "id": 17,
+      "name": "Notion",
+      "url": "https://notion.so",
+      "icon": "https://www.google.com/s2/favicons?domain=notion.so&sz=256"
+    },
+    {
+      "id": 24,
+      "name": "Openai",
+      "url": "https://openai.com",
+      "icon": "https://www.google.com/s2/favicons?domain=openai.com&sz=256"
+    },
+    {
       "id": 22,
       "name": "Airbnb",
       "url": "https://airbnb.com",
@@ -203,14 +188,216 @@ export default function Page() {
       "icon": "https://www.google.com/s2/favicons?domain=yahoo.com&sz=256"
     },
     {
-      "id": 24,
-      "name": "Openai",
-      "url": "https://openai.com",
-      "icon": "https://www.google.com/s2/favicons?domain=openai.com&sz=256"
+      "id": 26,
+      "name": "Github",
+      "url": "https://github.com",
+      "icon": "https://github.githubassets.com/assets/apple-touch-icon-180x180-a80b8e11abe2.png"
+    },
+    {
+      "id": 27,
+      "name": "Mail",
+      "url": "https://mail.google.com/mail",
+      "icon": "https://ssl.gstatic.com/ui/v1/icons/mail/rfr/gmail.ico"
+    },
+    {
+      "id": 28,
+      "name": "Youtube",
+      "url": "https://www.youtube.com",
+      "icon": "https://www.google.com/s2/favicons?domain=www.youtube.com&sz=256"
+    },
+    {
+      "id": 29,
+      "name": "Apple",
+      "url": "https://www.apple.com",
+      "icon": "https://s2.loli.net/2025/07/08/lvCOQUYI2D5ySaN.webp"
+    },
+    {
+      "id": 30,
+      "name": "Juejin",
+      "url": "https://juejin.cn",
+      "icon": "https://www.google.com/s2/favicons?domain=juejin.cn&sz=256"
+    },
+    {
+      "id": 31,
+      "name": "Macgf",
+      "url": "https://www.macgf.com",
+      "icon": "https://www.google.com/s2/favicons?domain=www.macgf.com&sz=256"
+    },
+    {
+      "id": 32,
+      "name": "Bilibili",
+      "url": "https://www.bilibili.com",
+      "icon": "https://www.google.com/s2/favicons?domain=www.bilibili.com&sz=256"
+    },
+    {
+      "id": 33,
+      "name": "Dash",
+      "url": "https://dash.cloudflare.com",
+      "icon": "https://www.google.com/s2/favicons?domain=dash.cloudflare.com&sz=256"
+    },
+    {
+      "id": 34,
+      "name": "Windy",
+      "url": "https://www.windy.com/22.833/108.303/wind?22.722,108.243,10,i:pressure,m:ejfajbB",
+      "icon": "https://www.google.com/s2/favicons?domain=www.windy.com&sz=256"
+    },
+    {
+      "id": 35,
+      "name": "Rust-lang",
+      "url": "https://www.rust-lang.org/zh-CN/",
+      "icon": "https://www.google.com/s2/favicons?domain=www.rust-lang.org&sz=256"
+    },
+    {
+      "id": 36,
+      "name": "Shadcn",
+      "url": "https://ui.shadcn.com/?ref=producthunt",
+      "icon": "https://www.google.com/s2/favicons?domain=ui.shadcn.com&sz=256"
+    },
+    {
+      "id": 37,
+      "name": "Tailwindcss",
+      "url": "https://tailwindcss.com/?ref=producthunt",
+      "icon": "https://www.google.com/s2/favicons?domain=tailwindcss.com&sz=256"
+    },
+    {
+      "id": 38,
+      "name": "React",
+      "url": "https://zh-hans.react.dev",
+      "icon": "https://www.google.com/s2/favicons?domain=zh-hans.react.dev&sz=256"
+    },
+    {
+      "id": 39,
+      "name": "Follow",
+      "url": "https://app.follow.is/timeline/view-0/all/pending",
+      "icon": "https://www.google.com/s2/favicons?domain=app.follow.is&sz=256"
+    },
+    {
+      "id": 40,
+      "name": "Canva",
+      "url": "https://www.canva.com",
+      "icon": "https://www.google.com/s2/favicons?domain=www.canva.com&sz=256"
+    },
+    {
+      "id": 41,
+      "name": "Linux",
+      "url": "https://linux.do",
+      "icon": "https://www.google.com/s2/favicons?domain=linux.do&sz=256"
+    },
+    {
+      "id": 42,
+      "name": "Claude",
+      "url": "https://claude.ai/new",
+      "icon": "https://s2.loli.net/2025/07/08/s3jRlJngOaUemrz.webp"
+    },
+    {
+      "id": 43,
+      "name": "Nextjs",
+      "url": "https://nextjs.org/docs",
+      "icon": "https://s2.loli.net/2025/07/08/qKTo4Dh3V2FwcsY.webp"
+    },
+    {
+      "id": 44,
+      "name": "V0",
+      "url": "https://v0.dev",
+      "icon": "https://www.google.com/s2/favicons?domain=v0.dev&sz=256"
+    },
+    {
+      "id": 45,
+      "name": "Vercel",
+      "url": "https://vercel.com/franciscos-projects-4488bd95",
+      "icon": "https://www.google.com/s2/favicons?domain=vercel.com&sz=256"
+    },
+    {
+      "id": 46,
+      "name": "Insta360",
+      "url": "https://www.insta360.com/cn/product/insta360-ace-pro2",
+      "icon": "https://s2.loli.net/2025/07/08/Er4pjkQlZoz7yNJ.webp"
+    },
+    {
+      "id": 47,
+      "name": "Dji",
+      "url": "https://www.dji.com/cn/mavic-4-pro?site=brandsite&from=homepage",
+      "icon": "https://www.google.com/s2/favicons?domain=www.dji.com&sz=256"
+    },
+    {
+      "id": 48,
+      "name": "Shadcn-Tool",
+      "url": "https://awesome-shadcn-ui.vercel.app",
+      "icon": "https://awesome-shadcn-ui.vercel.app/logo.svg"
+    },
+    {
+      "id": 49,
+      "name": "Berlix UI",
+      "url": "https://ui.rechesoares.com/docs/text-circle",
+      "icon": "https://s2.loli.net/2025/07/08/W5nBzjEtYrhCxIi.webp"
+    },
+    {
+      "id": 50,
+      "name": "Imgsrc",
+      "url": "https://imgsrc.io",
+      "icon": "https://www.google.com/s2/favicons?domain=imgsrc.io&sz=256"
+    },
+    {
+      "id": 51,
+      "name": "Animata",
+      "url": "https://animata.design/docs/accordion/faq",
+      "icon": "https://www.google.com/s2/favicons?domain=animata.design&sz=256"
+    },
+    {
+      "id": 52,
+      "name": "Magicui",
+      "url": "https://pro.magicui.design/docs/sections/header",
+      "icon": "https://www.google.com/s2/favicons?domain=pro.magicui.design&sz=256"
+    },
+    {
+      "id": 53,
+      "name": "Indie UI",
+      "url": "https://ui.indie-starter.dev/form-builder",
+      "icon": "https://www.google.com/s2/favicons?domain=ui.indie-starter.dev&sz=256"
+    },
+    {
+      "id": 54,
+      "name": "Variant",
+      "url": "https://variantvault.chrisabdo.dev",
+      "icon": "https://s2.loli.net/2025/07/08/sH2lm8kbNTVAnrY.webp"
     }
   ]);
 
   const containerRef = useRef<HTMLDivElement>(null);
+
+  // 计算分页数据
+  const totalPages = Math.ceil(websites.length / ITEMS_PER_PAGE);
+  const startIndex = currentPage * ITEMS_PER_PAGE;
+  const endIndex = startIndex + ITEMS_PER_PAGE;
+  const currentWebsites = websites.slice(startIndex, endIndex);
+
+  // 处理键盘事件
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'w' || e.key === 'W') {
+        e.preventDefault();
+        if (currentPage > 0) {
+          setPageTransition(true);
+          setTimeout(() => {
+            setCurrentPage(prev => prev - 1);
+            setPageTransition(false);
+          }, 150);
+        }
+      } else if (e.key === 's' || e.key === 'S') {
+        e.preventDefault();
+        if (currentPage < totalPages - 1) {
+          setPageTransition(true);
+          setTimeout(() => {
+            setCurrentPage(prev => prev + 1);
+            setPageTransition(false);
+          }, 150);
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [currentPage, totalPages]);
 
   // 解析网站信息
   const parseWebsiteInfo = async (url: string) => {
@@ -234,17 +421,13 @@ export default function Page() {
 
       const domain = urlObj.hostname;
 
-
-      // 方法1：尝试获取网站标题（通过代理或直接请求）
       let siteName = '';
       let siteIcon = '';
 
       try {
-        // 这里使用一个简单的方法：从域名提取站点名称
         siteName = domain.replace('www.', '').split('.')[0];
         siteName = siteName.charAt(0).toUpperCase() + siteName.slice(1);
 
-        // 尝试多种常见的favicon获取方式
         const iconUrls = [
           `https://www.google.com/s2/favicons?domain=${domain}&sz=256`,
           `https://icons.duckduckgo.com/ip3/${domain}.ico`,
@@ -252,7 +435,6 @@ export default function Page() {
           `https://favicons.githubusercontent.com/${domain}`
         ];
 
-        // 使用第一个可用的图标服务
         siteIcon = iconUrls[0];
 
       } catch (error) {
@@ -261,7 +443,6 @@ export default function Page() {
         siteIcon = `https://www.google.com/s2/favicons?domain=${domain}&sz=256`;
       }
 
-      // 更新表单数据
       setFormData({
         name: siteName,
         url: finalUrl,
@@ -283,14 +464,11 @@ export default function Page() {
   const handleUrlChange = (url: string) => {
     setFormData(prev => ({ ...prev, url }));
 
-    // 当URL看起来完整时自动解析
     if (url.includes('.') && (url.includes('http') || url.split('.').length >= 2)) {
-      // 防抖处理，避免频繁请求
       const timeoutId = setTimeout(() => {
         parseWebsiteInfo(url);
       }, 1000);
 
-      // 清理函数
       return () => clearTimeout(timeoutId);
     }
   };
@@ -301,12 +479,10 @@ export default function Page() {
     const x = Math.min(e.clientX, window.innerWidth - 160);
     const y = Math.min(e.clientY, window.innerHeight - 100);
 
-    // 检查是否点击在网站图标上
     const target = e.target as HTMLElement;
     const websiteItem = target.closest('[data-website-item]');
 
     if (websiteItem) {
-      // 如果点击在网站图标上，显示网站操作菜单
       const websiteId = parseInt(websiteItem.getAttribute('data-website-id') || '0');
       const website = websites.find(w => w.id === websiteId);
       if (website) {
@@ -314,7 +490,6 @@ export default function Page() {
         setContextMenu(null);
       }
     } else {
-      // 如果点击在空白区域，显示创建菜单
       setContextMenu({ x, y });
       setContextUpdateMenu(null);
     }
@@ -323,7 +498,7 @@ export default function Page() {
   // 处理网站图标的右键菜单
   const handleWebsiteContextMenu = (e: React.MouseEvent, website: Website) => {
     e.preventDefault();
-    e.stopPropagation(); // 阻止事件冒泡
+    e.stopPropagation();
 
     const x = Math.min(e.clientX, window.innerWidth - 160);
     const y = Math.min(e.clientY, window.innerHeight - 100);
@@ -383,19 +558,6 @@ export default function Page() {
 
   // 点击任意处关闭菜单
   useEffect(() => {
-    // 页面加载的时候尝试从本地获取数据
-    const saved = localStorage.getItem('my-websites');
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed)) {
-          setWebsites(parsed);
-        }
-      } catch (err) {
-        console.error('读取本地网站数据失败:', err);
-      }
-    }
-
     const handleClick = () => {
       setContextMenu(null);
       setContextUpdateMenu(null);
@@ -403,10 +565,6 @@ export default function Page() {
     document.addEventListener('click', handleClick);
     return () => document.removeEventListener('click', handleClick);
   }, []);
-  // 监听 websites 变化时，保存到 localStorage
-  useEffect(() => {
-    localStorage.setItem('my-websites', JSON.stringify(websites));
-  }, [websites]);
 
   const handleExport = () => {
     const dataStr = JSON.stringify(websites, null, 2);
@@ -466,7 +624,7 @@ export default function Page() {
   return (
       <div
           ref={containerRef}
-          className="flex flex-col min-h-screen bg-black"
+          className="flex flex-col min-h-screen bg-black relative"
           onContextMenu={handleContextMenu}
       >
         <input
@@ -477,24 +635,33 @@ export default function Page() {
             style={{ display: 'none' }}
         />
 
-        hasMounted && (
+
+
+
 
         <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-          <SortableContext items={websites} strategy={verticalListSortingStrategy}>
-            <div className="md:mt-51 md:mx-52 sm:mt-16 sm:mx-20 mt-6 mx-5 flex flex-wrap gap-5">
-              {websites.map((website) => (
-                  <SortableWebsite
+          <SortableContext items={currentWebsites} strategy={verticalListSortingStrategy}>
+            <div className={`md:mt-51 md:mx-52 sm:mt-16 sm:mx-20 mt-6 mx-5 flex flex-wrap gap-5 transition-all duration-300 ease-in-out ${
+                pageTransition ? 'opacity-0 transform translate-y-4' : 'opacity-100 transform translate-y-0'
+            }`}>
+              {currentWebsites.map((website, index) => (
+                  <div
                       key={website.id}
-                      website={website}
-                      handleWebsiteContextMenu={handleWebsiteContextMenu}
-                  />
+                      className="animate-fade-in"
+                      style={{
+                        animationDelay: `${index * 50}ms`,
+                        animationFillMode: 'both'
+                      }}
+                  >
+                    <SortableWebsite
+                        website={website}
+                        handleWebsiteContextMenu={handleWebsiteContextMenu}
+                    />
+                  </div>
               ))}
             </div>
           </SortableContext>
         </DndContext>
-
-
-        )
 
         {/* 空白区域右键菜单 */}
         {contextMenu && (
@@ -702,7 +869,22 @@ export default function Page() {
           </DialogContent>
         </Dialog>
 
+        <style jsx>{`
+          @keyframes fade-in {
+            from {
+              opacity: 0;
+              transform: translateY(20px);
+            }
+            to {
+              opacity: 1;
+              transform: translateY(0);
+            }
+          }
+          
+          .animate-fade-in {
+            animation: fade-in 0.6s ease-out;
+          }
+        `}</style>
       </div>
-
   );
 }
