@@ -146,10 +146,58 @@ export default function Page() {
   // 初始网站数据
   const [websites, setWebsites] = useState<Website[]>([
     {
-      "id": 25,
-      "name": "Mi",
-      "url": "https://mi.com",
-      "icon": "https://www.google.com/s2/favicons?domain=mi.com&sz=256"
+      "id": 4,
+      "name": "Google",
+      "url": "https://google.com",
+      "icon": "https://www.google.com/s2/favicons?domain=google.com&sz=256"
+    },
+    {
+      "id": 5,
+      "name": "Github",
+      "url": "https://github.com",
+      "icon": "https://www.google.com/s2/favicons?domain=github.com&sz=256"
+    },
+    {
+      "id": 6,
+      "name": "Youtube",
+      "url": "https://www.youtube.com",
+      "icon": "https://www.google.com/s2/favicons?domain=www.youtube.com&sz=256"
+    },
+    {
+      "id": 7,
+      "name": "Facebook",
+      "url": "https://facebook.com",
+      "icon": "https://www.google.com/s2/favicons?domain=facebook.com&sz=256"
+    },
+    {
+      "id": 8,
+      "name": "Twitter",
+      "url": "https://twitter.com",
+      "icon": "https://abs.twimg.com/responsive-web/client-web/icon-ios.77d25eba.png"
+    },
+    {
+      "id": 13,
+      "name": "Reddit",
+      "url": "https://reddit.com",
+      "icon": "https://www.google.com/s2/favicons?domain=reddit.com&sz=256"
+    },
+    {
+      "id": 16,
+      "name": "Slack",
+      "url": "https://slack.com",
+      "icon": "https://a.slack-edge.com/fd21de4/marketing/img/nav/logo.svg"
+    },
+    {
+      "id": 17,
+      "name": "Notion",
+      "url": "https://notion.so",
+      "icon": "https://www.google.com/s2/favicons?domain=notion.so&sz=256"
+    },
+    {
+      "id": 18,
+      "name": "Figma",
+      "url": "https://figma.com",
+      "icon": "https://www.google.com/s2/favicons?domain=figma.com&sz=256"
     },
     {
       "id": 19,
@@ -164,18 +212,6 @@ export default function Page() {
       "icon": "https://www.google.com/s2/favicons?domain=adobe.com&sz=256"
     },
     {
-      "id": 17,
-      "name": "Notion",
-      "url": "https://notion.so",
-      "icon": "https://www.google.com/s2/favicons?domain=notion.so&sz=256"
-    },
-    {
-      "id": 24,
-      "name": "Openai",
-      "url": "https://openai.com",
-      "icon": "https://www.google.com/s2/favicons?domain=openai.com&sz=256"
-    },
-    {
       "id": 22,
       "name": "Airbnb",
       "url": "https://airbnb.com",
@@ -188,178 +224,10 @@ export default function Page() {
       "icon": "https://www.google.com/s2/favicons?domain=yahoo.com&sz=256"
     },
     {
-      "id": 26,
-      "name": "Github",
-      "url": "https://github.com",
-      "icon": "https://github.githubassets.com/assets/apple-touch-icon-180x180-a80b8e11abe2.png"
-    },
-    {
-      "id": 27,
-      "name": "Mail",
-      "url": "https://mail.google.com/mail",
-      "icon": "https://ssl.gstatic.com/ui/v1/icons/mail/rfr/gmail.ico"
-    },
-    {
-      "id": 28,
-      "name": "Youtube",
-      "url": "https://www.youtube.com",
-      "icon": "https://www.google.com/s2/favicons?domain=www.youtube.com&sz=256"
-    },
-    {
-      "id": 29,
-      "name": "Apple",
-      "url": "https://www.apple.com",
-      "icon": "https://s2.loli.net/2025/07/08/lvCOQUYI2D5ySaN.webp"
-    },
-    {
-      "id": 30,
-      "name": "Juejin",
-      "url": "https://juejin.cn",
-      "icon": "https://www.google.com/s2/favicons?domain=juejin.cn&sz=256"
-    },
-    {
-      "id": 31,
-      "name": "Macgf",
-      "url": "https://www.macgf.com",
-      "icon": "https://www.google.com/s2/favicons?domain=www.macgf.com&sz=256"
-    },
-    {
-      "id": 32,
-      "name": "Bilibili",
-      "url": "https://www.bilibili.com",
-      "icon": "https://www.google.com/s2/favicons?domain=www.bilibili.com&sz=256"
-    },
-    {
-      "id": 33,
-      "name": "Dash",
-      "url": "https://dash.cloudflare.com",
-      "icon": "https://www.google.com/s2/favicons?domain=dash.cloudflare.com&sz=256"
-    },
-    {
-      "id": 34,
-      "name": "Windy",
-      "url": "https://www.windy.com/22.833/108.303/wind?22.722,108.243,10,i:pressure,m:ejfajbB",
-      "icon": "https://www.google.com/s2/favicons?domain=www.windy.com&sz=256"
-    },
-    {
-      "id": 35,
-      "name": "Rust-lang",
-      "url": "https://www.rust-lang.org/zh-CN/",
-      "icon": "https://www.google.com/s2/favicons?domain=www.rust-lang.org&sz=256"
-    },
-    {
-      "id": 36,
-      "name": "Shadcn",
-      "url": "https://ui.shadcn.com/?ref=producthunt",
-      "icon": "https://www.google.com/s2/favicons?domain=ui.shadcn.com&sz=256"
-    },
-    {
-      "id": 37,
-      "name": "Tailwindcss",
-      "url": "https://tailwindcss.com/?ref=producthunt",
-      "icon": "https://www.google.com/s2/favicons?domain=tailwindcss.com&sz=256"
-    },
-    {
-      "id": 38,
-      "name": "React",
-      "url": "https://zh-hans.react.dev",
-      "icon": "https://www.google.com/s2/favicons?domain=zh-hans.react.dev&sz=256"
-    },
-    {
-      "id": 39,
-      "name": "Follow",
-      "url": "https://app.follow.is/timeline/view-0/all/pending",
-      "icon": "https://www.google.com/s2/favicons?domain=app.follow.is&sz=256"
-    },
-    {
-      "id": 40,
-      "name": "Canva",
-      "url": "https://www.canva.com",
-      "icon": "https://www.google.com/s2/favicons?domain=www.canva.com&sz=256"
-    },
-    {
-      "id": 41,
-      "name": "Linux",
-      "url": "https://linux.do",
-      "icon": "https://www.google.com/s2/favicons?domain=linux.do&sz=256"
-    },
-    {
-      "id": 42,
-      "name": "Claude",
-      "url": "https://claude.ai/new",
-      "icon": "https://s2.loli.net/2025/07/08/s3jRlJngOaUemrz.webp"
-    },
-    {
-      "id": 43,
-      "name": "Nextjs",
-      "url": "https://nextjs.org/docs",
-      "icon": "https://s2.loli.net/2025/07/08/qKTo4Dh3V2FwcsY.webp"
-    },
-    {
-      "id": 44,
-      "name": "V0",
-      "url": "https://v0.dev",
-      "icon": "https://www.google.com/s2/favicons?domain=v0.dev&sz=256"
-    },
-    {
-      "id": 45,
-      "name": "Vercel",
-      "url": "https://vercel.com/franciscos-projects-4488bd95",
-      "icon": "https://www.google.com/s2/favicons?domain=vercel.com&sz=256"
-    },
-    {
-      "id": 46,
-      "name": "Insta360",
-      "url": "https://www.insta360.com/cn/product/insta360-ace-pro2",
-      "icon": "https://s2.loli.net/2025/07/08/Er4pjkQlZoz7yNJ.webp"
-    },
-    {
-      "id": 47,
-      "name": "Dji",
-      "url": "https://www.dji.com/cn/mavic-4-pro?site=brandsite&from=homepage",
-      "icon": "https://www.google.com/s2/favicons?domain=www.dji.com&sz=256"
-    },
-    {
-      "id": 48,
-      "name": "Shadcn-Tool",
-      "url": "https://awesome-shadcn-ui.vercel.app",
-      "icon": "https://awesome-shadcn-ui.vercel.app/logo.svg"
-    },
-    {
-      "id": 49,
-      "name": "Berlix UI",
-      "url": "https://ui.rechesoares.com/docs/text-circle",
-      "icon": "https://s2.loli.net/2025/07/08/W5nBzjEtYrhCxIi.webp"
-    },
-    {
-      "id": 50,
-      "name": "Imgsrc",
-      "url": "https://imgsrc.io",
-      "icon": "https://www.google.com/s2/favicons?domain=imgsrc.io&sz=256"
-    },
-    {
-      "id": 51,
-      "name": "Animata",
-      "url": "https://animata.design/docs/accordion/faq",
-      "icon": "https://www.google.com/s2/favicons?domain=animata.design&sz=256"
-    },
-    {
-      "id": 52,
-      "name": "Magicui",
-      "url": "https://pro.magicui.design/docs/sections/header",
-      "icon": "https://www.google.com/s2/favicons?domain=pro.magicui.design&sz=256"
-    },
-    {
-      "id": 53,
-      "name": "Indie UI",
-      "url": "https://ui.indie-starter.dev/form-builder",
-      "icon": "https://www.google.com/s2/favicons?domain=ui.indie-starter.dev&sz=256"
-    },
-    {
-      "id": 54,
-      "name": "Variant",
-      "url": "https://variantvault.chrisabdo.dev",
-      "icon": "https://s2.loli.net/2025/07/08/sH2lm8kbNTVAnrY.webp"
+      "id": 24,
+      "name": "Openai",
+      "url": "https://openai.com",
+      "icon": "https://www.google.com/s2/favicons?domain=openai.com&sz=256"
     }
   ]);
 
@@ -558,6 +426,19 @@ export default function Page() {
 
   // 点击任意处关闭菜单
   useEffect(() => {
+    // 页面加载的时候尝试从本地获取数据
+    const saved = localStorage.getItem('my-websites');
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) {
+          setWebsites(parsed);
+        }
+      } catch (err) {
+        console.error('读取本地网站数据失败:', err);
+      }
+    }
+
     const handleClick = () => {
       setContextMenu(null);
       setContextUpdateMenu(null);
@@ -565,6 +446,11 @@ export default function Page() {
     document.addEventListener('click', handleClick);
     return () => document.removeEventListener('click', handleClick);
   }, []);
+
+  // 监听 websites 变化时，保存到 localStorage
+  useEffect(() => {
+    localStorage.setItem('my-websites', JSON.stringify(websites));
+  }, [websites]);
 
   const handleExport = () => {
     const dataStr = JSON.stringify(websites, null, 2);
@@ -634,8 +520,6 @@ export default function Page() {
             onChange={handleFileChange}
             style={{ display: 'none' }}
         />
-
-
 
 
 
@@ -880,7 +764,7 @@ export default function Page() {
               transform: translateY(0);
             }
           }
-          
+
           .animate-fade-in {
             animation: fade-in 0.6s ease-out;
           }
