@@ -33,6 +33,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { motion } from 'framer-motion';
 
 interface Website {
   id: number;
@@ -59,6 +60,7 @@ function SortableWebsite({
 
   const [hasMounted, setHasMounted] = useState(false);
 
+
   useEffect(() => {
     setHasMounted(true);
   }, []);
@@ -66,6 +68,8 @@ function SortableWebsite({
   if (!hasMounted) {
     return null;
   }
+
+
 
   return (
       <div
@@ -79,22 +83,22 @@ function SortableWebsite({
           onContextMenu={(e) => handleWebsiteContextMenu(e, website)}
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
-          className={`cursor-pointer flex flex-col items-center w-18 mt-4 border-amber-50 flex-shrink-0 transition-all duration-300 ease-in-out ${
+          className={`cursor-pointer flex flex-col items-center w-18 mt-4 border-amber-50 flex-shrink-0 transition-all duration-20 ease-in-out ${
               isHovered ? 'transform scale-110' : 'transform scale-100'
           }`}
       >
-        <div className={`w-18 h-18 bg-white flex rounded-xl items-center justify-center transition-all duration-300 ease-in-out ${
+        <div className={`w-18 h-18 bg-white flex rounded-xl items-center justify-center transition-all duration-20 ease-in-out ${
             isHovered ? 'shadow-lg shadow-white/20' : ''
         }`}>
           <img
               src={website.icon}
-              className={`size-16 rounded-lg transition-all duration-300 ease-in-out ${
+              className={`size-16 rounded-lg transition-all duration-20 ease-in-out ${
                   isHovered ? 'brightness-110' : ''
               }`}
               alt={website.name}
           />
         </div>
-        <p className={`mt-1 text-white text-xs leading-tight transition-all duration-300 ease-in-out ${
+        <p className={`mt-1 text-white text-xs leading-tight transition-all duration-20 ease-in-out ${
             isHovered ? 'text-blue-300' : ''
         }`}>
           {website.name}
@@ -111,7 +115,6 @@ export default function Page() {
   const [editingWebsite, setEditingWebsite] = useState<Website | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
-  const [pageTransition, setPageTransition] = useState(false);
 
   const ITEMS_PER_PAGE = 36;
 
@@ -231,6 +234,7 @@ export default function Page() {
     }
   ]);
 
+
   const containerRef = useRef<HTMLDivElement>(null);
 
   // 计算分页数据
@@ -245,29 +249,120 @@ export default function Page() {
       if (e.key === 'w' || e.key === 'W') {
         e.preventDefault();
         if (currentPage > 0) {
-          setPageTransition(true);
-          setTimeout(() => {
-            setCurrentPage(prev => prev - 1);
-            setPageTransition(false);
-          }, 150);
+          setCurrentPage(prev => prev - 1);
         }
       } else if (e.key === 's' || e.key === 'S') {
         e.preventDefault();
         if (currentPage < totalPages - 1) {
-          setPageTransition(true);
-          setTimeout(() => {
-            setCurrentPage(prev => prev + 1);
-            setPageTransition(false);
-          }, 150);
+          setCurrentPage(prev => prev + 1);
         }
       }
     };
 
+    let isScrolling = false;
+
+
+    const handleWheel = (e: WheelEvent) => {
+      e.preventDefault();
+
+      // 防抖处理
+      if (isScrolling) return;
+      isScrolling = true;
+
+      if (e.deltaY > 0) { // 向下滚动
+        if (currentPage < totalPages - 1) {
+          setCurrentPage(prev => prev + 1);
+        }
+      } else { // 向上滚动
+        if (currentPage > 0) {
+          setCurrentPage(prev => prev - 1);
+        }
+      }
+
+      // 300ms后重置防抖标志
+      setTimeout(() => {
+        isScrolling = false;
+      }, 300);
+    };
+
     window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    window.addEventListener('wheel', handleWheel, { passive: false });
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('wheel', handleWheel);
+    };
   }, [currentPage, totalPages]);
 
-  // 解析网站信息
+  // 1. 添加图片处理工具函数 (在组件开始处添加)
+  const imageUrlToBase64 = async (url: string): Promise<string | null> => {
+    try {
+      const response = await fetch(url);
+      const blob = await response.blob();
+      return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result as string);
+        reader.readAsDataURL(blob);
+      });
+    } catch (error) {
+      console.error('转换图片失败:', error);
+      return null;
+    }
+  };
+
+  const fileToBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result as string);
+      reader.readAsDataURL(file);
+    });
+  };
+
+  // 修改 compressImage 函数，提高图片质量
+  const compressImage = (file: File, maxWidth: number = 256, quality: number = 0.9): Promise<Blob> => {
+    return new Promise((resolve) => {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      const img = new Image();
+      const maxSize = maxWidth; // 或者用 maxDimension 表达“最大边长”
+
+      img.onload = () => {
+        if (!ctx) return;
+
+        // 计算合适的尺寸，保持宽高比
+        let { width, height } = img;
+
+        if (width > height) {
+          if (width > maxWidth) {
+            height = (height * maxWidth) / width;
+            width = maxWidth;
+          }
+        } else {
+          if (height > maxSize) {
+            width = (width * maxSize) / height;
+            height = maxSize;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+
+        // 使用更好的图像渲染设置
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
+
+        ctx.drawImage(img, 0, 0, width, height);
+
+        // 使用 PNG 格式保持更好的质量，或者提高 JPEG 质量
+        canvas.toBlob((blob) => {
+          if (blob) resolve(blob);
+        }, file.type.startsWith('image/png') ? 'image/png' : 'image/jpeg', quality);
+      };
+
+      img.src = URL.createObjectURL(file);
+    });
+  };
+
+  // 2. 修改parseWebsiteInfo函数
   const parseWebsiteInfo = async (url: string) => {
     if (!url) return;
 
@@ -275,7 +370,7 @@ export default function Page() {
       setIsLoading(true);
 
       let finalUrl = url;
-      if (!url.startsWith('http://') && !url.startsWith('https://')) {
+      if (!url.startsWith('https://') && !url.startsWith('https://')) {
         finalUrl = 'https://' + url;
       }
 
@@ -284,13 +379,13 @@ export default function Page() {
         urlObj = new URL(finalUrl);
       } catch (err) {
         console.error('非法URL:', err);
-        throw new Error('非法 URL: ' + finalUrl);
+        return;
       }
 
       const domain = urlObj.hostname;
 
       let siteName = '';
-      let siteIcon = '';
+      let siteIcon: string;
 
       try {
         siteName = domain.replace('www.', '').split('.')[0];
@@ -303,12 +398,20 @@ export default function Page() {
           `https://favicons.githubusercontent.com/${domain}`
         ];
 
-        siteIcon = iconUrls[0];
+        const iconUrl = iconUrls[0];
+
+        // 将图片URL转换为Base64
+        const base64Icon = await imageUrlToBase64(iconUrl);
+        siteIcon = base64Icon || iconUrl; // 如果转换失败，保持原URL
 
       } catch (error) {
         console.log('解析网站信息时出错:', error);
         siteName = domain.replace('www.', '');
         siteIcon = `https://www.google.com/s2/favicons?domain=${domain}&sz=256`;
+
+        // 尝试转换默认图标
+        const base64Icon = await imageUrlToBase64(siteIcon);
+        siteIcon = base64Icon || siteIcon;
       }
 
       setFormData({
@@ -328,13 +431,34 @@ export default function Page() {
     }
   };
 
+  // 3. 添加文件上传处理函数
+  const handleIconUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      setIsLoading(true);
+
+      // 压缩图片
+      const compressedFile = await compressImage(file);
+      const base64 = await fileToBase64(compressedFile as File);
+
+      setFormData(prev => ({ ...prev, icon: base64 }));
+    } catch (error) {
+      console.error('上传图片失败:', error);
+      alert('上传图片失败，请重试');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   // 处理URL输入变化
   const handleUrlChange = (url: string) => {
     setFormData(prev => ({ ...prev, url }));
 
     if (url.includes('.') && (url.includes('http') || url.split('.').length >= 2)) {
       const timeoutId = setTimeout(() => {
-        parseWebsiteInfo(url);
+        parseWebsiteInfo(url).then(r => {console.info('<UNK> URL:', r);});
       }, 1000);
 
       return () => clearTimeout(timeoutId);
@@ -507,6 +631,10 @@ export default function Page() {
     reader.readAsText(file);
   };
 
+
+
+
+
   return (
       <div
           ref={containerRef}
@@ -521,27 +649,25 @@ export default function Page() {
             style={{ display: 'none' }}
         />
 
-
-
         <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
           <SortableContext items={currentWebsites} strategy={verticalListSortingStrategy}>
-            <div className={`md:mt-51 md:mx-52 sm:mt-16 sm:mx-20 mt-6 mx-5 flex flex-wrap gap-5 transition-all duration-300 ease-in-out ${
-                pageTransition ? 'opacity-0 transform translate-y-4' : 'opacity-100 transform translate-y-0'
-            }`}>
+            <div className={`md:mt-51 md:mx-52 sm:mt-16 sm:mx-20 mt-6 mx-5 flex flex-wrap gap-5`}>
               {currentWebsites.map((website, index) => (
-                  <div
+                  <motion.div
                       key={website.id}
-                      className="animate-fade-in"
-                      style={{
-                        animationDelay: `${index * 50}ms`,
-                        animationFillMode: 'both'
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{
+                        duration: 0.6,
+                        delay: index * 0.05,
+                        ease: "easeOut"
                       }}
                   >
                     <SortableWebsite
                         website={website}
                         handleWebsiteContextMenu={handleWebsiteContextMenu}
                     />
-                  </div>
+                  </motion.div>
               ))}
             </div>
           </SortableContext>
@@ -670,21 +796,50 @@ export default function Page() {
                 <div className="col-span-3 flex items-center gap-2">
                   <Input
                       id="icon"
-                      value={formData.icon}
+                      value={formData.icon && formData.icon.startsWith('data:') ? '已上传本地图片' : formData.icon}
                       onChange={(e) => setFormData(prev => ({ ...prev, icon: e.target.value }))}
                       className="flex-1"
                       placeholder="自动解析或手动输入图标链接"
+                      disabled={!!(formData.icon && formData.icon.startsWith('data:'))}
+                  />
+                  <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => document.getElementById('icon-upload')?.click()}
+                      disabled={isLoading}
+                  >
+                    {isLoading ? '处理中...' : '上传'}
+                  </Button>
+                  <input
+                      id="icon-upload"
+                      type="file"
+                      accept="image/*"
+                      style={{ display: 'none' }}
+                      onChange={handleIconUpload}
                   />
                   {formData.icon && (
-                      <img
-                          src={formData.icon}
-                          alt="icon preview"
-                          className="w-8 h-8 rounded border"
-                          onError={(e) => {
-                            const target = e.target as HTMLImageElement;
-                            target.style.display = 'none';
-                          }}
-                      />
+                      <div className="flex items-center gap-2">
+                        <img
+                            src={formData.icon}
+                            alt="icon preview"
+                            className="w-8 h-8 rounded border"
+                            onError={(e) => {
+                              const target = e.target as HTMLImageElement;
+                              target.style.display = 'none';
+                            }}
+                        />
+                        {formData.icon.startsWith('data:') && (
+                            <Button
+                                type="button"
+                                variant="outline"
+                                size="sm"
+                                onClick={() => setFormData(prev => ({ ...prev, icon: '' }))}
+                            >
+                              清除
+                            </Button>
+                        )}
+                      </div>
                   )}
                 </div>
               </div>
@@ -736,13 +891,55 @@ export default function Page() {
                 <Label htmlFor="edit-icon" className="text-right">
                   图标
                 </Label>
-                <Input
-                    id="edit-icon"
-                    value={formData.icon}
-                    onChange={(e) => setFormData(prev => ({ ...prev, icon: e.target.value }))}
-                    className="col-span-3"
-                    placeholder="请输入图标链接（可选）"
-                />
+                <div className="col-span-3 flex items-center gap-2">
+                  <Input
+                      id="edit-icon"
+                      value={formData.icon && formData.icon.startsWith('data:') ? '已上传本地图片' : formData.icon}
+                      onChange={(e) => setFormData(prev => ({ ...prev, icon: e.target.value }))}
+                      className="flex-1"
+                      placeholder="请输入图标链接（可选）"
+                      disabled={!!(formData.icon && formData.icon.startsWith('data:'))}
+                  />
+                  <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => document.getElementById('edit-icon-upload')?.click()}
+                      disabled={isLoading}
+                  >
+                    {isLoading ? '处理中...' : '上传'}
+                  </Button>
+                  <input
+                      id="edit-icon-upload"
+                      type="file"
+                      accept="image/*"
+                      style={{ display: 'none' }}
+                      onChange={handleIconUpload}
+                  />
+                  {formData.icon && (
+                      <div className="flex items-center gap-2">
+                        <img
+                            src={formData.icon}
+                            alt="icon preview"
+                            className="w-8 h-8 rounded border"
+                            onError={(e) => {
+                              const target = e.target as HTMLImageElement;
+                              target.style.display = 'none';
+                            }}
+                        />
+                        {formData.icon.startsWith('data:') && (
+                            <Button
+                                type="button"
+                                variant="outline"
+                                size="sm"
+                                onClick={() => setFormData(prev => ({ ...prev, icon: '' }))}
+                            >
+                              清除
+                            </Button>
+                        )}
+                      </div>
+                  )}
+                </div>
               </div>
             </div>
             <DialogFooter>
@@ -753,22 +950,6 @@ export default function Page() {
           </DialogContent>
         </Dialog>
 
-        <style jsx>{`
-          @keyframes fade-in {
-            from {
-              opacity: 0;
-              transform: translateY(20px);
-            }
-            to {
-              opacity: 1;
-              transform: translateY(0);
-            }
-          }
-
-          .animate-fade-in {
-            animation: fade-in 0.6s ease-out;
-          }
-        `}</style>
       </div>
   );
 }
