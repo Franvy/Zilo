@@ -1,40 +1,80 @@
-# <img src="/public/apple-touch-icon.png" width="20"> Zilo
+# Zilo
 
-> ✨ A modern bookmark manager with customizable global background color — optimized for Safari and minimalism.  
-> ✨ 一款支持全局背景颜色自定义的现代化书签管理器，专为 Safari 和极简设计而打造。
+[中文文档 | Chinese README](./README.zh-CN.md)
 
----
+<img src="/public/preview.png">
 
-<img src="/public/preview.png" >
+Zilo is a modern bookmark manager that lets you organize and access your favorite websites with ease. Unlike typical bookmark tools, Zilo supports custom global background colors, allowing seamless integration with Safari and your system theme.
 
-## 📌 Features | 功能特色
+## Features
 
-- ⚡️ **Quick Access to Websites** — Click icons to launch saved sites instantly.  
-  快速访问网站：点击图标即可立即打开保存的网站。
+- 🚀 **Add, Edit, Delete Bookmarks**: Easily manage your favorite websites.
+- 🖱️ **Drag-and-Drop Sorting**: Rearrange your bookmarks with intuitive drag-and-drop.
+- 💾 **Local Storage**: All your data is saved in your browser, ensuring privacy and persistence.
+- 📦 **Import/Export**: Backup or transfer your bookmarks via JSON files.
+- 🌗 **Dark Mode**: Beautiful interface with system theme adaptation.
+- ⚡ **Keyboard & Mouse Navigation**: Quickly flip pages with keyboard (W/S) or mouse wheel.
+- 🖼️ **Automatic Icon Fetching**: Website icons are fetched automatically, or you can upload your own.
+- 🛠️ **Built with**: Next.js, React, Tailwind CSS, dnd-kit, framer-motion, shadcn/ui.
 
-- 🎨 **Custom Global Background Color** — Unlike most bookmark tools that only allow background images, Zilo lets you set a **solid color** background that blends naturally with Safari.  
-  自定义全局背景颜色：Zilo 不仅能设置背景图，更支持纯色背景，与 Safari 原生界面完美融合。
+## Getting Started
 
-- 🧩 **Minimal & Clean UI** — Built with Next.js 15 + Tailwind CSS 4 + ShadCN UI.  
-  极简设计：基于 Next.js 15、Tailwind CSS 4 和 ShadCN UI 构建，界面简洁、响应迅速。
+### Prerequisites
 
-- 📱 **Responsive Layout** — Mobile-friendly, dark mode ready.  
-  响应式布局：移动端兼容，支持深色模式。
+- Node.js >= 18
+- pnpm (recommended) or npm/yarn
 
----
+### Installation
 
+```bash
+pnpm install
+# or
+npm install
+# or
+yarn install
+```
 
-📄 License | 许可证
+### Development
 
-This project is licensed under the MIT License.
-本项目使用 MIT 开源许可证。
+```bash
+pnpm dev
+# or
+npm run dev
+# or
+yarn dev
+```
 
-⸻
+Visit [http://localhost:3000](http://localhost:3000) to view the app.
 
-🧑‍💻 Author | Franvy
+### Build
 
-Zilo by Franvy
+```bash
+pnpm build
+# or
+npm run build
+# or
+yarn build
+```
 
-欢迎提 Issue 或 PR 改进本项目 🚀
-Feel free to submit issues or PRs to improve this project.
+### Start
 
+```bash
+pnpm start
+# or
+npm start
+# or
+yarn start
+```
+
+## File Structure
+
+- `app/` - Main application pages and layout
+- `components/` - UI components
+- `hooks/` - Custom React hooks
+- `lib/` - Utility functions
+- `types/` - TypeScript types
+- `public/` - Static assets
+
+## License
+
+MIT

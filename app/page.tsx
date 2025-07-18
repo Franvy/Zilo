@@ -118,7 +118,7 @@ export default function Page() {
   return (
       <div
           ref={containerRef}
-          className="flex flex-col min-h-screen bg-black relative"
+          className="flex flex-col min-h-screen relative"
           onContextMenu={handleContextMenu}
       >
         <ImportExport websites={websites} onImport={setWebsites} />
