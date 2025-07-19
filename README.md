@@ -1,8 +1,11 @@
 # Zilo
 
+<a href="https://www.producthunt.com/products/zilo?embed=true&utm_source=badge-featured&utm_medium=badge&utm_source=badge-zilo" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=994650&theme=light&t=1752943415049" alt="Zilo - Your&#0032;Modern&#0032;Bookmark&#0032;Home&#0046; | Product Hunt" style="width: 250px; height: 54px;" width="250" height="54" /></a>
+
 [中文文档 | Chinese README](./README.zh-CN.md)
 
 <img src="/public/preview.png">
+
 
 Zilo is a modern bookmark manager that lets you organize and access your favorite websites with ease. Unlike typical bookmark tools, Zilo supports custom global background colors, allowing seamless integration with Safari and your system theme.
 

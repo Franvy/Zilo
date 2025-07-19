@@ -1,7 +1,8 @@
 # Zilo
 
-<img src="/public/preview.png">
+<a href="https://www.producthunt.com/products/zilo?embed=true&utm_source=badge-featured&utm_medium=badge&utm_source=badge-zilo" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=994650&theme=light&t=1752943415049" alt="Zilo - Your&#0032;Modern&#0032;Bookmark&#0032;Home&#0046; | Product Hunt" style="width: 250px; height: 54px;" width="250" height="54" /></a>
 
+<img src="/public/preview.png">
 Zilo 是一款现代化的书签管理器，帮助你轻松整理和访问常用网站。与传统书签工具不同，Zilo 支持自定义全局背景色，可无缝适配 Safari 及系统主题。
 
 ## 功能特性
